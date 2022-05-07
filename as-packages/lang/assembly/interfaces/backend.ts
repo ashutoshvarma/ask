@@ -128,5 +128,17 @@ export interface TypedEnvBackend extends EnvBackend {
      */
     random<H, B, Input extends ArrayLike<u8>>(input: Input): RandomResult<H, B>;
 
+    /**
+     * Checks whether the specified account is a contract.
+     * @param accountId 
+     */
+    isContract<T>(accountId: T): bool;
+
+    /**
+     * Checks whether the caller of the current contract is the origin of the whole call stack.
+     * Prefer this over isContract when checking whether your contract is being called by a contract or a plain account. The reason is that it performs better since it does not need to do any storage lookups.
+     * A return value of true indicates that this contract is being called by a plain account. and false indicates that the caller is another contract.
+     */
+    callIsOrigin(): bool;
     // TODO: add more methods for host functions
 }
