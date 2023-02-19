@@ -66,6 +66,16 @@ export class Lazy<T> implements SpreadLayout {
         return this._cache as StorageEntry<T>;
     }
 
+    @inline
+    FOOTPRINT(): u64 {
+        return 1;
+    }
+
+    @inline
+    REQUIRES_DEEP_CLEAN_UP(): bool {
+        return true;
+    }
+
     pullSpread<K extends IKey>(key: K): void {
         // @ts-ignore
         ++key;

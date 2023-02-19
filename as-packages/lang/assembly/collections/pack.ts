@@ -12,6 +12,16 @@ export class Pack<T> implements PackedLayout, SpreadLayout, ISerialize, IDeseria
     }
 
     @inline
+    FOOTPRINT(): u64 {
+        return 1;
+    }
+
+    @inline
+    REQUIRES_DEEP_CLEAN_UP(): bool {
+        return true;
+    }
+
+    @inline
     pullSpread<K extends IKey>(key: K): void {
         // @ts-ignore
         this.inner = forwardPullPacked<T, K>(key);

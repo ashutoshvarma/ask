@@ -196,6 +196,16 @@ export class LazyIndexMap<V> implements SpreadLayout {
     }
 
     @inline
+    FOOTPRINT(): u64 {
+        return 1;
+    }
+
+    @inline
+    REQUIRES_DEEP_CLEAN_UP(): bool {
+        return true;
+    }
+
+    @inline
     protected keyAt(key: u32): Key {
         // make indexKey unique by adding a big offset key.
         return (this._key as Key).add((key as u64) << 32);

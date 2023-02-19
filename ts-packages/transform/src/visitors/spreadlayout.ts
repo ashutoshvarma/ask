@@ -53,7 +53,13 @@ export class SpreadLayoutVisitor extends TransformVisitor {
     }
 
     private genSpreadLayout(node: ClassDeclaration): MethodDeclaration[] {
-        const res = [this.genPullSpread(node), this.genPushSpread(node), this.genClearSpread(node)];
+        const res = [
+            this.genPullSpread(node),
+            this.genPushSpread(node),
+            this.genClearSpread(node),
+            this.genFootprint(node),
+            this.genRequiresDeepClean(node),
+        ];
         return res;
     }
 
@@ -109,6 +115,37 @@ export class SpreadLayoutVisitor extends TransformVisitor {
             .join("\n");
 
         const methodDecl = `${METHOD_CLEAR}<__K extends ${IKEY_TYPE_PATH}>(key: __K): void { ${superCall} ${stmts} }`;
+        const methodNode = SimpleParser.parseClassMember(methodDecl, clz);
+        assert(methodNode.kind == NodeKind.METHODDECLARATION);
+        return methodNode as MethodDeclaration;
+    }
+
+    private genFootprint(clz: ClassDeclaration): MethodDeclaration {
+        const METHOD_FOOTPRINT = "FOOTPRINT";
+        const LANF_METHOD_FOOTPRINT = "spreadFootprint";
+
+        const superCall = this.hasBase ? `+ super.${METHOD_FOOTPRINT}()` : "";
+        const stmts =
+            this.fields.length > 0
+                ? "+ " +
+                  this.fields
+                      .map(
+                          (field) =>
+                              `__lang.${LANF_METHOD_FOOTPRINT}<${field.type?.range.toString()}>()`,
+                      )
+                      .join("+")
+                : "";
+
+        const methodDecl = `${METHOD_FOOTPRINT}(): u64 { return 1 ${superCall} ${stmts}; }`;
+        const methodNode = SimpleParser.parseClassMember(methodDecl, clz);
+        assert(methodNode.kind == NodeKind.METHODDECLARATION);
+        return methodNode as MethodDeclaration;
+    }
+
+    private genRequiresDeepClean(clz: ClassDeclaration): MethodDeclaration {
+        const METHOD_FOOTPRINT = "REQUIRES_DEEP_CLEAN_UP";
+
+        const methodDecl = `${METHOD_FOOTPRINT}(): bool { return true; }`;
         const methodNode = SimpleParser.parseClassMember(methodDecl, clz);
         assert(methodNode.kind == NodeKind.METHODDECLARATION);
         return methodNode as MethodDeclaration;

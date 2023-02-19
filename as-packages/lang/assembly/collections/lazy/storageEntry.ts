@@ -81,6 +81,17 @@ export class StorageEntry<T> implements SpreadLayout, PackedLayout {
         return this._state == EntryState.Cleared;
     }
 
+    @inline
+    FOOTPRINT(): u64 {
+        // @ts-ignore
+        return 1 + this._value.FOOTPRINT();
+    }
+
+    @inline
+    REQUIRES_DEEP_CLEAN_UP(): bool {
+        return true;
+    }
+
     /**
      * Pulls the entity from the underlying associated storage as a `SpreadLayout` storage layout representation.
      * @param key

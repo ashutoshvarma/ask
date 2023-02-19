@@ -218,3 +218,56 @@ export function clearSpread<T extends SpreadLayout, K extends IKey>(value: T, ke
         value.clearSpread<K>(key);
     }
 }
+
+export function defaultFoorprint<T extends SpreadLayout>(): u64 {
+    return 1;
+}
+
+export function spreadFootprint<T extends SpreadLayout>(): u64 {
+    let dummy: T;
+    if (!isReference<T>() || false) {
+        return defaultFoorprint<T>();
+    } else if (
+        isString<T>() ||
+        idof<T>() == idof<i128>() ||
+        idof<T>() == idof<u128>() ||
+        idof<T>() == idof<Error>() ||
+        idof<T>() == idof<SyntaxError>() ||
+        idof<T>() == idof<RangeError>() ||
+        idof<T>() == idof<TypeError>() ||
+        idof<T>() == idof<URIError>() ||
+        idof<T>() == idof<TypeError>() ||
+        idof<T>() == idof<ArrayBuffer>() ||
+        idof<T>() == idof<Int8Array>() ||
+        idof<T>() == idof<Int16Array>() ||
+        idof<T>() == idof<Int32Array>() ||
+        idof<T>() == idof<Int64Array>() ||
+        idof<T>() == idof<Uint8Array>() ||
+        idof<T>() == idof<Uint16Array>() ||
+        idof<T>() == idof<Uint32Array>() ||
+        idof<T>() == idof<Uint64Array>() ||
+        isArray<T>() ||
+        isArrayLike<T>() ||
+        false
+    ) {
+        return defaultFoorprint<T>();
+    }
+    // @ts-ignore
+    else if (isDefined(dummy.FOOTPRINT())) {
+        // @ts-ignore
+        return dummy.FOOTPRINT();
+    } else if (
+        // @ts-ignore
+        value instanceof Set ||
+        // @ts-ignore
+        value instanceof Map ||
+        // @ts-ignore
+        dummy instanceof FixedArray ||
+        false
+    ) {
+        return defaultFoorprint<T>();
+    } else {
+        // @ts-ignore
+        return dummy.FOOTPRINT();
+    }
+}

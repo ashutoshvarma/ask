@@ -79,6 +79,16 @@ export class Mapping<K1, V, H extends IHash256> implements SpreadLayout {
         env().clearContractStroage<Key>(k);
     }
 
+    @inline
+    FOOTPRINT(): u64 {
+        return 1;
+    }
+
+    @inline
+    REQUIRES_DEEP_CLEAN_UP(): bool {
+        return true;
+    }
+
     pullSpread<T extends IKey>(key: T): void {
         // @ts-ignore
         ++key;
